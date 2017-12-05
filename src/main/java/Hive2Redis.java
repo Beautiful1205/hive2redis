@@ -1,12 +1,9 @@
 import config.RedisConfig;
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisCluster;
 
 import java.io.IOException;
 import java.sql.*;
-import java.util.HashSet;
-import java.util.Set;
+
 
 /**
  * @author: Administrator$
@@ -23,15 +20,9 @@ public class Hive2Redis {
     private static String tableName = "base_station";
 
     public static void main(String[] args) throws SQLException, IOException {
-        Set<HostAndPort> jedisClusterNodes = new HashSet<HostAndPort>();
-        for (String s:
-                new RedisConfig().getConfig().split(" ")) {
-            String[] ipport=s.split(":");
-            jedisClusterNodes.add(new HostAndPort(ipport[0], Integer.parseInt(ipport[1])));
-        }
-        JedisCluster jc = new JedisCluster(jedisClusterNodes, new GenericObjectPoolConfig());
 
-       try {
+        JedisCluster jc = RedisConfig.jc;
+        try {
             Class.forName(driverName);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -49,7 +40,7 @@ public class Hive2Redis {
             int stationflag = rs.getInt("stationflag");
             int stationstatus = rs.getInt("stationstatus");
             String citycode = rs.getString("citycode");
-            jc.geoadd(citycode,longitude,latitude,String.valueOf(stationid)+"-"+name+"-"+stationflag+"-"+stationstatus);
+            jc.geoadd(citycode, longitude, latitude, String.valueOf(stationid) + "-" + name + "-" + stationflag + "-" + stationstatus);
         }
         rs.close();
         conn.close();
