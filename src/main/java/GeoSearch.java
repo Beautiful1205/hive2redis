@@ -22,7 +22,10 @@ public class GeoSearch {
         JedisCluster jc = RedisConfig.jc;
         List<GeoRadiusResponse> listRes =jc.georadius("130400",114.479278,36.612833,5, GeoUnit.KM,  GeoRadiusParam.geoRadiusParam().sortAscending().count(1).withCoord());
         GeoRadiusResponse res= listRes.get(0);
+        jc.lpush("testlist","sdf");
         String[] a = res.getMemberByString().split("-");
+        System.out.println(jc.get("testkey"));
+        System.out.println(jc.llen("distance_2000_15777"));
         System.out.println(a[0]);
         jc.close();
     }
